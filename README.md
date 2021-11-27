@@ -1,6 +1,6 @@
 # DMCLatticeBoltzmann
 
-This is a swift implementation of a D2Q9 Lattice-Boltzmann fluid flow simulation.
+This is a Swift implementation of a D2Q9 Lattice-Boltzmann fluid flow simulation.
 
 This package defines three products.
 
