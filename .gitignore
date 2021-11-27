@@ -6,5 +6,5 @@ xcuserdata/
 DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 *.mov
-/non_swift
+Package.resolved
 
