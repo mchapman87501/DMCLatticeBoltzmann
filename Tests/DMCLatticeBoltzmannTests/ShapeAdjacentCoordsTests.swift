@@ -1,13 +1,16 @@
 import XCTest
+
 @testable import DMCLatticeBoltzmann
 
 typealias TestCoordLists = [[DMCLatticeBoltzmann.ShapeAdjacentCoords.Coord]]
 typealias TestPolygon = DMCLatticeBoltzmann.Polygon
 
 final class ShapeAdjacentCoordsTests: XCTestCase {
-    
+
     func foilShape() -> TestPolygon {
-        return AirFoil(x: 0.0, y: 0.0, width: 100.0, alphaRad: 4.0 * .pi / 180.0).shape
+        return AirFoil(
+            x: 0.0, y: 0.0, width: 100.0, alphaRad: 4.0 * .pi / 180.0
+        ).shape
     }
 
     func testInit() throws {
@@ -15,7 +18,7 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
         let adjCoords = ShapeAdjacentCoords(shape: shape)
         XCTAssertEqual(adjCoords.adjacents.count, shape.edges.count)
     }
-    
+
     func testAdjacentsLieOutside() throws {
         let shape = foilShape()
         let adjCoords = ShapeAdjacentCoords(shape: shape)
@@ -26,7 +29,7 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
             }
         }
     }
-    
+
     struct ShapeMask: CustomStringConvertible {
         // Origin:
         let x: Int
@@ -34,16 +37,16 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
         // Size:
         let width: Int
         let height: Int
-        
+
         let inShape: [[Bool]]
-        
+
         init(shape: TestPolygon) {
             let sbb = shape.bbox
             let xOrigin = Int(sbb.minX) - 5
             let yOrigin = Int(sbb.minY) - 5
             let width = Int(0.5 + sbb.width) + 10
             let height = Int(0.5 + sbb.height) + 10
-            
+
             var inShape = [[Bool]]()
             for y in yOrigin..<(yOrigin + height) {
                 let row = (xOrigin..<(xOrigin + width)).map { x in
@@ -69,11 +72,11 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
             }
             return inShape[iy][ix]
         }
-        
+
         var description: String {
             return "ShapeMask(\(x), \(y), \(width), \(height))"
         }
-        
+
         func getMaskStrGrid() -> [[String]] {
             let result: [[String]] = inShape.map { row in
                 row.map { isMaskPoint in
@@ -97,17 +100,22 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
                     let xGrid = xc - x
                     let yGrid = yc - y
                     if (xGrid < 0) || (xGrid >= width) {
-                        print("getMaskStr: x (\(xc) -> \(xGrid)) is out of bounds")
+                        print(
+                            "getMaskStr: x (\(xc) -> \(xGrid)) is out of bounds"
+                        )
                     } else if (yGrid < 0) || (yGrid >= height) {
-                        print("getMaskStr: y (\(yc) -> \(yGrid)) is out of bounds")
+                        print(
+                            "getMaskStr: y (\(yc) -> \(yGrid)) is out of bounds"
+                        )
                     } else {
-                        strGrid[yGrid][xGrid] = adjMarker(inShape[yGrid][xGrid], index: iEdge)
+                        strGrid[yGrid][xGrid] = adjMarker(
+                            inShape[yGrid][xGrid], index: iEdge)
                     }
                 }
             }
             return strGrid
         }
-        
+
         func printMaskStr(_ maskStr: [[String]]) {
             // A diagnostic image would work better here...
             // This tries to pixellate the polygon and the generated adjacents
@@ -121,16 +129,15 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
             // Print with positive y upward.
             printMaskStr(getMaskStr(with: [[(xIn, yIn)]]))
         }
-        
+
         func printMaskStr(with adjacents: TestCoordLists) {
             printMaskStr(getMaskStr(with: adjacents))
         }
     }
-    
-    
+
     func abuts(mask: ShapeMask, edgeIndex: Int, x: Int, y: Int) -> Bool {
         // Adjacency test is complicated by rounding to nearest integer coordinates.
-        
+
         // Verify that the point lies outside the mask.
         if mask.contains(x: x, y: y) {
             return false
@@ -154,7 +161,7 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
     func testAdjacentsAreNearest() throws {
         let shape = foilShape()
         let mask = ShapeMask(shape: shape)
-        
+
         let adjCoords = ShapeAdjacentCoords(shape: shape)
         var hadFailures = false
         for iEdge in 0..<adjCoords.adjacents.count {
@@ -163,7 +170,8 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
                 // Integer rounding makes this more difficult...
                 // Can one step one pixel vertically, horizontally, or diagonally
                 // to a point that lies inside the shape?
-                let abuts = abuts(mask: mask, edgeIndex: iEdge, x: point.0, y: point.1)
+                let abuts = abuts(
+                    mask: mask, edgeIndex: iEdge, x: point.0, y: point.1)
                 XCTAssertTrue(abuts, "\(point)")
                 if !abuts {
                     hadFailures = true

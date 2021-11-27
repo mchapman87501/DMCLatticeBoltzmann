@@ -1,5 +1,5 @@
-import Foundation
 import Accelerate
+import Foundation
 
 public typealias NodeProperties = SystemProperties
 
@@ -9,11 +9,11 @@ public struct LatticePropertyCalc {
     let n: LatticeNodeData
     public let width: Int
     public let height: Int
-    
+
     public var numNodes: Int { return width * height }
-    
+
     let index: LatticeIndexing
-    
+
     private let numRecords: Int
     private var rhos: [Float]
     private var uxSums: [Float]
@@ -26,7 +26,7 @@ public struct LatticePropertyCalc {
         self.width = width
         self.height = height
         self.index = LatticeIndexing(width: width, height: height)
-        
+
         let numRecords = width * height
         self.numRecords = numRecords
         self.rhos = [Float](repeating: 0.0, count: numRecords)
@@ -36,7 +36,7 @@ public struct LatticePropertyCalc {
         self.uy = [Float](repeating: 0.0, count: numRecords)
         calcAllNodeProperties()
     }
-    
+
     public mutating func update() {
         calcAllNodeProperties()
     }
@@ -44,15 +44,20 @@ public struct LatticePropertyCalc {
     private mutating func calcAllNodeProperties() {
         let numRecords = Int32(numRecords)
         // rhos:
-        cblas_sgemv(CblasRowMajor, CblasNoTrans, numRecords, Int32(numDirections), 1.0, n, Int32(numDirections), Self.fone, Int32(1), 0.0, &rhos, Int32(1))
+        cblas_sgemv(
+            CblasRowMajor, CblasNoTrans, numRecords, Int32(numDirections), 1.0,
+            n, Int32(numDirections), Self.fone, Int32(1), 0.0, &rhos, Int32(1))
 
         // uxSums:
-        cblas_sgemv(CblasRowMajor, CblasNoTrans, numRecords, Int32(numDirections), 1.0, n, Int32(numDirections), fdvx, Int32(1), 0.0, &uxSums, Int32(1))
+        cblas_sgemv(
+            CblasRowMajor, CblasNoTrans, numRecords, Int32(numDirections), 1.0,
+            n, Int32(numDirections), fdvx, Int32(1), 0.0, &uxSums, Int32(1))
 
         // uySums:
-        cblas_sgemv(CblasRowMajor, CblasNoTrans, numRecords, Int32(numDirections), 1.0, n, Int32(numDirections), fdvy, Int32(1), 0.0, &uySums, Int32(1))
-        
-        
+        cblas_sgemv(
+            CblasRowMajor, CblasNoTrans, numRecords, Int32(numDirections), 1.0,
+            n, Int32(numDirections), fdvy, Int32(1), 0.0, &uySums, Int32(1))
+
         var nr = numRecords
         vvdivf(&ux, &uxSums, &rhos, &nr)
         vvdivf(&uy, &uySums, &rhos, &nr)
@@ -60,8 +65,8 @@ public struct LatticePropertyCalc {
 
     public func getProperties() -> SystemProperties {
         let rhoSum = Double(rhos.reduce(0.0) { $0 + $1 })
-        let uxSum = Double(uxSums.reduce(0.0) {$0 + $1})
-        let uySum = Double(uySums.reduce(0.0) {$0 + $1})
+        let uxSum = Double(uxSums.reduce(0.0) { $0 + $1 })
+        let uySum = Double(uySums.reduce(0.0) { $0 + $1 })
 
         let rho = rhoSum / Double(numRecords)
         let ux = (rho > 0.0) ? (uxSum / rho) : 0.0
@@ -74,11 +79,11 @@ public struct LatticePropertyCalc {
         let result = getNodeProperties(offset: offset)
         return result
     }
-    
+
     public func getNodeProperties(offset nodeOffset: Int) -> NodeProperties {
         // XXX FIX THIS artifact of old API
         let offset = nodeOffset / numDirections
-        
+
         let rho = Double(rhos[offset])
         let x = Double(ux[offset])
         let y = Double(uy[offset])
@@ -98,7 +103,9 @@ public struct LatticePropertyCalc {
 
 extension LatticePropertyCalc {
     // For matrix-oriented calculations.
-    public func getAllProps() -> (rhos: [Float], uxSums: [Float], uySums: [Float]) {
+    public func getAllProps() -> (
+        rhos: [Float], uxSums: [Float], uySums: [Float]
+    ) {
         return (rhos: rhos, uxSums: uxSums, uySums: uySums)
     }
 }

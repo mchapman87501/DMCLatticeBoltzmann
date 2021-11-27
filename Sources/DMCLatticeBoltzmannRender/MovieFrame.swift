@@ -1,7 +1,6 @@
 import AppKit
-import Foundation
 import DMCLatticeBoltzmann
-
+import Foundation
 
 /// Makes PNG images (movie frames) from world state
 public struct MovieFrame {
@@ -15,7 +14,9 @@ public struct MovieFrame {
 
     private let nodeRects: [[NSRect]]
 
-    public init(lattice: Lattice, foil: AirFoil, width: Int, height: Int, title: String) {
+    public init(
+        lattice: Lattice, foil: AirFoil, width: Int, height: Int, title: String
+    ) {
         self.lattice = lattice
         self.foil = foil
         // Expedient: assume the lattice has same aspect ratio as width/height
@@ -26,7 +27,7 @@ public struct MovieFrame {
         self.scale = scale
         nodeRects = Self.initNodeRects(lattice: lattice, scale: scale)
     }
-    
+
     private static func initNodeRects(lattice: Lattice, scale: Double)
         -> [[NSRect]]
     {
@@ -45,7 +46,9 @@ public struct MovieFrame {
         let size = NSSize(width: imgWidth, height: imgHeight)
 
         let renderer = FrameRenderer(
-            title: title, alpha: alpha, scale: scale, lattice: lattice, foil: foil, nodeRects: nodeRects, normalizedDensity: getNormalizer())
+            title: title, alpha: alpha, scale: scale, lattice: lattice,
+            foil: foil, nodeRects: nodeRects, normalizedDensity: getNormalizer()
+        )
 
         return NSImage(size: size, flipped: false) { rect in
             renderer.draw(rect)

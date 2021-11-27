@@ -1,4 +1,5 @@
 import XCTest
+
 @testable import DMCLatticeBoltzmann
 
 extension Lattice {
@@ -10,11 +11,15 @@ extension Lattice {
         return propCalc.getProperties()
     }
 
-    internal func testingGetNodeProperties(x: Int, y: Int) throws -> NodeProperties {
+    internal func testingGetNodeProperties(x: Int, y: Int) throws
+        -> NodeProperties
+    {
         return try propCalc.getNodeProperties(x: x, y: y)
     }
 
-    internal func testingSetNodeDensities(x: Int, y: Int, values: [Double]) throws {
+    internal func testingSetNodeDensities(x: Int, y: Int, values: [Double])
+        throws
+    {
         guard values.count == numDirections else {
             throw LatticeError.valueError(
                 "Number of node densities must be \(numDirections)")
@@ -70,7 +75,7 @@ final class LatticeTests: XCTestCase {
         let props = lat.testingGetProperties()
         XCTAssertEqual(props.rho, 1.0, accuracy: 1.0e-6)
     }
-    
+
     func testGetNodeProperties() throws {
         let width = 5
         let height = 5
@@ -78,7 +83,8 @@ final class LatticeTests: XCTestCase {
         for y in 0..<height {
             for x in 0..<width {
                 let props = try lat.testingGetNodeProperties(x: x, y: y)
-                XCTAssertEqual(props.rho, 1.0, accuracy: 1.0e-6, "Node[\(x), \(y)]")
+                XCTAssertEqual(
+                    props.rho, 1.0, accuracy: 1.0e-6, "Node[\(x), \(y)]")
             }
         }
     }
@@ -94,12 +100,12 @@ final class LatticeTests: XCTestCase {
         let uAfter = magSqr(x: after.ux, y: after.uy)
         XCTAssertEqual(uBefore, uAfter, accuracy: 1.0e-5)
     }
-    
+
     func testCollideObstacle() throws {
         // TODO verify that an obstacle node simply "reflects" its field densities during
         // collision.
     }
-    
+
     func testStreamCenter() throws {
         let width = 3
         let height = 3
@@ -107,7 +113,9 @@ final class LatticeTests: XCTestCase {
         var i = 0
         for y in 0..<height {
             for x in 0..<width {
-                try lat.testingSetNodeDensities(x: x, y: y, values: [Double(i), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+                try lat.testingSetNodeDensities(
+                    x: x, y: y,
+                    values: [Double(i), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
                 i += 1
             }
         }
@@ -115,22 +123,23 @@ final class LatticeTests: XCTestCase {
         // Darn.  This test requires exposing lattice operations that otherwise would
         // not need to be exposed: update node properties, and get node densities.
         lat.testingUpdateNodeProperties()
-        
+
         i = 0
         for y in 0..<height {
             for x in 0..<width {
                 let actual = try lat.testingGetNodeDensities(x: x, y: y)
-                XCTAssertEqual(actual, [Double(i), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+                XCTAssertEqual(
+                    actual, [Double(i), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
                 i += 1
             }
         }
     }
-    
+
     func testStreamOneDirection(dir: Direction) throws {
         let dirIndex = dir.rawValue
         let width = 4
         let height = 4
-        
+
         // Fill the lattice with 1 in flow direction site, 0 elsewhere.
         let lat = Lattice(width: width, height: height)!
         var i = 0
@@ -142,18 +151,19 @@ final class LatticeTests: XCTestCase {
                 i += 1
             }
         }
-        
+
         struct Locus: Hashable {
             let x: Int
             let y: Int
         }
         typealias NodeDensities = [Locus: [Double]]
-        
+
         func getDensities(_ lat: Lattice) throws -> NodeDensities {
             var result = [Locus: [Double]]()
             for x in 0..<lat.width {
                 for y in 0..<lat.height {
-                    result[Locus(x: x, y: y)] = try lat.testingGetNodeDensities(x: x, y: y)
+                    result[Locus(x: x, y: y)] = try lat.testingGetNodeDensities(
+                        x: x, y: y)
                 }
             }
             return result
@@ -162,13 +172,13 @@ final class LatticeTests: XCTestCase {
         let before = try getDensities(lat)
         lat.stream()
         let after = try getDensities(lat)
-        
+
         if dirIndex == 0 {
             // There should be no motion.
             XCTAssertEqual(before, after)
             return
         }
-        
+
         XCTAssertNotEqual(before, after)
         for (k, vAfter) in after {
             // Verify non-flow-direction values are zero.
@@ -177,7 +187,7 @@ final class LatticeTests: XCTestCase {
                     XCTAssertEqual(vAfter[rawDir], 0.0)
                 }
             }
-            
+
             // vAfter value should have streamed in from where?
             let x = k.x
             let y = k.y
@@ -195,16 +205,18 @@ final class LatticeTests: XCTestCase {
             } else if ySrc >= lat.height {
                 ySrc -= lat.height
             }
-            
+
             let srcValues = before[Locus(x: xSrc, y: ySrc)]!
             let expected = srcValues[dirIndex]
             let actual = vAfter[dirIndex]
             if expected != actual {
-                XCTFail("Direction \(dir) (\(dx), \(dy)): [\(x), \(y)] expected value from old [\(xSrc), \(ySrc)].  But actual \(actual) != expected \(expected)")
+                XCTFail(
+                    "Direction \(dir) (\(dx), \(dy)): [\(x), \(y)] expected value from old [\(xSrc), \(ySrc)].  But actual \(actual) != expected \(expected)"
+                )
             }
         }
     }
-    
+
     func testStreamAllDirections() throws {
         for direction in Direction.allCases {
             try testStreamOneDirection(dir: direction)
@@ -231,16 +243,20 @@ final class LatticeTests: XCTestCase {
             // on each step.
             for ix in 0..<width {
                 for iy in 0..<height {
-                    let currProp = try lat.testingGetNodeProperties(x: ix, y: iy)
+                    let currProp = try lat.testingGetNodeProperties(
+                        x: ix, y: iy)
                     let beforeProp = before[iy][ix]
-                    XCTAssertTrue(beforeProp.rho <= currProp.rho, "Step \(iStep), [\(iy), \(ix)]")
+                    XCTAssertTrue(
+                        beforeProp.rho <= currProp.rho,
+                        "Step \(iStep), [\(iy), \(ix)]")
                     let uMagSqr = magSqr(x: currProp.ux, y: currProp.uy)
-                    XCTAssertTrue(uMagSqr > 0.0, "Step \(iStep), [\(iy), \(ix)]")
+                    XCTAssertTrue(
+                        uMagSqr > 0.0, "Step \(iStep), [\(iy), \(ix)]")
                 }
             }
         }
     }
-    
+
     func testDensities() throws {
 
     }

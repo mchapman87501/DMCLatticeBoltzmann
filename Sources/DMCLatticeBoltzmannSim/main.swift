@@ -1,10 +1,10 @@
+import DMCLatticeBoltzmann
+import DMCLatticeBoltzmannRender
+import DMCMovieWriter
 // I'm trying to learn a bit about Lattice Boltzmann by following
 // assignment guidelines from
 // https://physics.weber.edu/schroeder/javacourse/LatticeBoltzmann.pdf
 import Foundation
-import DMCLatticeBoltzmann
-import DMCMovieWriter
-import DMCLatticeBoltzmannRender
 
 struct StopWatch {
     let t0 = DispatchTime.now()
@@ -36,10 +36,14 @@ struct Scenario {
     }
 }
 
-func run(scenario: Scenario, lattice: Lattice, foil: AirFoil, writingTo movieWriter: DMCMovieWriter) {
+func run(
+    scenario: Scenario, lattice: Lattice, foil: AirFoil,
+    writingTo movieWriter: DMCMovieWriter
+) {
     let title = scenario.description()
 
-    let writer = try! WorldWriter(lattice: lattice, foil: foil, writingTo: movieWriter, title: title)
+    let writer = try! WorldWriter(
+        lattice: lattice, foil: foil, writingTo: movieWriter, title: title)
 
     print(title)
     try! writer.showTitle(title)
@@ -106,7 +110,9 @@ func recordScenario(
     try! lattice.setBoundaryEdge(x: 0)
     try! lattice.setBoundaryEdge(x: worldWidth - 1)
 
-    run(scenario: scenario, lattice: lattice, foil: foil, writingTo: movieWriter)
+    run(
+        scenario: scenario, lattice: lattice, foil: foil, writingTo: movieWriter
+    )
 }
 
 func getScenarios() -> [Scenario] {

@@ -22,16 +22,19 @@ public class Tracer {
         v: Vector, boundingXMin xMin: Double, yMin: Double, xMax: Double,
         yMax: Double
     ) {
-        move(dx: v.x, dy: v.y, boundingXMin: xMin, yMin: yMin, xMax: xMax, yMax: yMax)
+        move(
+            dx: v.x, dy: v.y, boundingXMin: xMin, yMin: yMin, xMax: xMax,
+            yMax: yMax)
     }
 
     func move(
-        dx: Double, dy: Double, boundingXMin xMin: Double, yMin: Double, xMax: Double,
+        dx: Double, dy: Double, boundingXMin xMin: Double, yMin: Double,
+        xMax: Double,
         yMax: Double
     ) {
         x += dx
         y += dy
-        
+
         if x < xMin {
             x = xMin
         } else if x > xMax {

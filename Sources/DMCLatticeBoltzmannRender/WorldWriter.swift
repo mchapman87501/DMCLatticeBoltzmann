@@ -1,7 +1,7 @@
 import AppKit
-import Foundation
-import DMCMovieWriter
 import DMCLatticeBoltzmann
+import DMCMovieWriter
+import Foundation
 
 public struct WorldWriter {
     let lattice: Lattice
@@ -9,13 +9,17 @@ public struct WorldWriter {
     let movieWriter: DMCMovieWriter
     let frameMaker: MovieFrame
     var title: String
-    
-    public init(lattice: Lattice, foil: AirFoil, writingTo: DMCMovieWriter, title: String = "") throws {
+
+    public init(
+        lattice: Lattice, foil: AirFoil, writingTo: DMCMovieWriter,
+        title: String = ""
+    ) throws {
         self.lattice = lattice
         self.foil = foil
         movieWriter = writingTo
         frameMaker = MovieFrame(
-            lattice: lattice, foil: foil, width: lattice.width, height: lattice.height, title: title)
+            lattice: lattice, foil: foil, width: lattice.width,
+            height: lattice.height, title: title)
         self.title = title
     }
 
@@ -27,28 +31,36 @@ public struct WorldWriter {
         let size = NSSize(width: lattice.width, height: lattice.height)
 
         let numRampFrames = 30
-        let rampFrameDuration = 1.0/30.0
+        let rampFrameDuration = 1.0 / 30.0
 
         var alpha = 0.0
         let dAlpha = 1.0 / Double(numRampFrames)
         for _ in 0..<numRampFrames {
-            try addTitleFrame(title: title, size: size, alpha: alpha, duration: rampFrameDuration)
+            try addTitleFrame(
+                title: title, size: size, alpha: alpha,
+                duration: rampFrameDuration)
             alpha += dAlpha
         }
-        
-        try addTitleFrame(title: title, size: size, alpha: 1.0, duration: Double(seconds))
+
+        try addTitleFrame(
+            title: title, size: size, alpha: 1.0, duration: Double(seconds))
 
         for _ in 0..<numRampFrames {
-            try addTitleFrame(title: title, size: size, alpha: alpha, duration: rampFrameDuration)
+            try addTitleFrame(
+                title: title, size: size, alpha: alpha,
+                duration: rampFrameDuration)
             alpha -= dAlpha
         }
         try movieWriter.drain()
     }
-    
-    private func addTitleFrame(title: String, size: NSSize, alpha: Double, duration: Double) throws {
+
+    private func addTitleFrame(
+        title: String, size: NSSize, alpha: Double, duration: Double
+    ) throws {
         try autoreleasepool {
             try movieWriter.addFrame(
-                titleFrameImage(title: title, size: size, alpha: alpha), duration: duration)
+                titleFrameImage(title: title, size: size, alpha: alpha),
+                duration: duration)
         }
     }
 
@@ -94,7 +106,8 @@ public struct WorldWriter {
             let desiredHeight = Double(lattice.height) * scaleFactor
             let w = Int(desiredWidth)
             let h = Int(desiredHeight)
-            let frame = MovieFrame(lattice: lattice, foil: foil, width: w, height: h, title: title)
+            let frame = MovieFrame(
+                lattice: lattice, foil: foil, width: w, height: h, title: title)
             let result = frame.createFrame()
             return result
         }

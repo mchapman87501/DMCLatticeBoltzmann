@@ -6,23 +6,27 @@ public struct EdgePressureCalc {
     public let edgePressures: [Double]
     public let edgePressureVectors: [Vector]
     public let netPressure: Vector
-    
+
     public init(propCalc: LatticePropertyCalc, shape: Polygon) {
         let adjCoords = ShapeAdjacentCoords(shape: shape).adjacents
 
-        let edgePressures: [Double] = adjCoords.enumerated().map { (iEdge, edgeAdjCoords) in
-            var result = 0.0//            print("  Edge \(iEdge): \(shape.edges[iEdge])")
+        let edgePressures: [Double] = adjCoords.enumerated().map {
+            (iEdge, edgeAdjCoords) in
+            var result = 0.0  //            print("  Edge \(iEdge): \(shape.edges[iEdge])")
             for (latticeX, latticeY) in edgeAdjCoords {
-                if let props = try? propCalc.getNodeProperties(x: latticeX, y: latticeY) {
+                if let props = try? propCalc.getNodeProperties(
+                    x: latticeX, y: latticeY)
+                {
                     // Does it matter that the node has, not just a density, but a net flow velocity?
                     result += props.rho
                 }
             }
             // Voodoo: average density over # samples, multiply by segment length.
-            result = (result / Double(edgeAdjCoords.count)) * shape.edges[iEdge].asVector().magnitude()
+            result =
+                (result / Double(edgeAdjCoords.count))
+                * shape.edges[iEdge].asVector().magnitude()
             return result
         }
-
 
         let edgeMidpoints: [Vector] = shape.edges.map { edge in
             let xMid = (edge.p0.x + edge.pf.x) / 2.0
@@ -31,14 +35,15 @@ public struct EdgePressureCalc {
         }
         let edgePressureVectors = (0..<shape.edges.count).map { edgeIndex in
             // Pressure vectors point inward -- opposite to the edge normals
-            return shape.edgeNormals[edgeIndex].scaled(-edgePressures[edgeIndex])
+            return shape.edgeNormals[edgeIndex].scaled(
+                -edgePressures[edgeIndex])
         }
-  
+
         var netPressure = Vector()
         for ep in edgePressureVectors {
             netPressure = netPressure.adding(ep)
         }
-        
+
         self.edgeMidpoints = edgeMidpoints
         self.edgePressures = edgePressures
         self.edgePressureVectors = edgePressureVectors

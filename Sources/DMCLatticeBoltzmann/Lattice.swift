@@ -59,7 +59,7 @@ public class Lattice {
         // 20 = K * (400 * 400)
         let K = 1.0 / 8000.0
         let thermalSpeed = sqrt(temperature / K)
-        
+
         // The lattice spacing and simulation time steps are scaled
         // so that lattice discrete speeds are <= 1.
         // That is, maximum lattice spacing ∆x and simulation time step ∆t are chosen so that
@@ -75,7 +75,7 @@ public class Lattice {
         // scale2 = u / windSpeed
         // So... use a fudge factor to hide my incorrect reasoning...
         let K2 = 1.0 / (1.6 * (thermalSpeed + windSpeed))
-        
+
         let scaledWindSpeed = K2 * windSpeed
 
         var n = LatticeNodeData.allocate(
@@ -252,9 +252,10 @@ public class Lattice {
     internal func stream() {
         let width = width
         let height = height
-        
+
         func wrapped(_ val: Int, _ maxVal: Int) -> Int {
-            return (val < 0) ? (val + maxVal) : ((val >= maxVal) ? val - maxVal : val)
+            return (val < 0)
+                ? (val + maxVal) : ((val >= maxVal) ? val - maxVal : val)
         }
 
         let stepSize = max(1, height / (3 * concurrency))
@@ -278,7 +279,9 @@ public class Lattice {
 
                             // Boundary nodes don't stream in values; they just copy in their
                             // current field densities.
-                            let srcIndex = self.isBoundary[iDestNode] ? iDestSite : iSrcSite
+                            let srcIndex =
+                                self.isBoundary[iDestNode]
+                                ? iDestSite : iSrcSite
                             self.nStream[iDestSite] = self.n[srcIndex]
                         }
                     }
@@ -325,7 +328,8 @@ extension Lattice {
             for y in 0..<height {
                 let nodeIndex = (y * width) + x
                 if !(isBoundary[nodeIndex] || isObstacle[nodeIndex]) {
-                    if let rho = try? propCalc.getNodeProperties(x: x, y: y).rho {
+                    if let rho = try? propCalc.getNodeProperties(x: x, y: y).rho
+                    {
                         if first {
                             minVal = rho
                             maxVal = rho
