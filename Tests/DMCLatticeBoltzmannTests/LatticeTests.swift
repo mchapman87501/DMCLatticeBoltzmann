@@ -56,6 +56,8 @@ extension Lattice {
 }
 
 final class LatticeTests: XCTestCase {
+    typealias Polygon = DMCLatticeBoltzmann.Polygon
+
     func magSqr(x: Double, y: Double) -> Double {
         return x * x + y * y
     }
@@ -224,9 +226,9 @@ final class LatticeTests: XCTestCase {
     }
 
     func testStep() throws {
-        let width = 8
-        let height = 4
-        let lat = Lattice(width: width, height: height, windSpeed: 0.1)!
+        let width = 32
+        let height = 16
+        let lat = Lattice(width: width, height: height, windSpeed: 50.0)!
         var before = [[NodeProperties]]()
         for iy in 0..<height {
             var row = [NodeProperties]()
@@ -237,7 +239,7 @@ final class LatticeTests: XCTestCase {
             before.append(row)
         }
 
-        for iStep in 1...150 {
+        for iStep in 1...300 {
             lat.step()
             // This is a useless test.  rho can change as "wind" is added at the "tunnel entrance"
             // on each step.
@@ -257,7 +259,130 @@ final class LatticeTests: XCTestCase {
         }
     }
 
-    func testDensities() throws {
+    func testAddObstacleOutOfBounds() throws {
+        let width = 32
+        let height = 24
+        let lat = Lattice(width: width, height: height, windSpeed: 0.0)!
+
+        let yOOB = Double(height) + 1
+        let outOfBounds = Polygon([
+            (0.0, yOOB), (5.0, yOOB), (5.0, yOOB + 4.0), (0.0, yOOB + 4.0),
+        ])
+        lat.addObstacle(shape: outOfBounds)
+        for iy in 0..<height {
+            let rowOffset = iy * width
+            for ix in 0..<width {
+                XCTAssertFalse(lat.isObstacle[rowOffset + ix])
+            }
+        }
+    }
+
+    func testAddObstacleInBounds() throws {
+        let width = 32
+        let height = 24
+        let lat = Lattice(width: width, height: height, windSpeed: 0.0)!
+
+        let extent = 2.0
+        let x = Double(width) / 2.0
+        let y = Double(height) / 2.0
+        let shape = Polygon([
+            (x - extent, y - extent), (x + extent, y - extent),
+            (x + extent, y + extent), (x - extent, y + extent),
+        ])
+        lat.addObstacle(shape: shape)
+        let numObstacleNodes = (lat.isObstacle.map { $0 ? 1 : 0 }).reduce(0) {
+            $0 + $1
+        }
+        XCTAssertEqual(numObstacleNodes, 4 * Int(extent * extent))
+    }
+
+    func testWithObstacle() throws {
+        // XXX FIX THIS dimensions reflect knowledge of tracer spacing
+        // within lattice
+        let width = 32
+        let height = 24
+        let lat = Lattice(width: width, height: height, windSpeed: 50.0)!
+        let brick = Polygon([
+            (1.0, 15.0), (5.0, 15.0), (5.0, 18.0), (1.0, 18.0),
+        ])
+        lat.addObstacle(shape: brick)
+
+        var before = [[NodeProperties]]()
+        for iy in 0..<height {
+            var row = [NodeProperties]()
+            for ix in 0..<width {
+                let props = try lat.testingGetNodeProperties(x: ix, y: iy)
+                row.append(props)
+            }
+            before.append(row)
+        }
+
+        // No density comparison vs. old state?
+        // TODO understand how boundaries can affect densities of
+        // adjacent sites.
+        for iStep in 1...100 {
+            lat.step()
+            for ix in 0..<width {
+                for iy in 0..<height {
+                    let currProp = try lat.testingGetNodeProperties(
+                        x: ix, y: iy)
+                    XCTAssertGreaterThan(
+                        currProp.rho, 0.0, "Step \(iStep), [\(iy), \(ix)]")
+                }
+            }
+        }
+    }
+
+    func testWithBoundaries() throws {
+        let width = 32
+        let height = 24
+        let lat = Lattice(width: width, height: height, windSpeed: 50.0)!
+        try lat.setBoundaryEdge(x: 0)
+        try lat.setBoundaryEdge(y: 0)
+
+        var before = [[NodeProperties]]()
+        for iy in 0..<height {
+            var row = [NodeProperties]()
+            for ix in 0..<width {
+                let props = try lat.testingGetNodeProperties(x: ix, y: iy)
+                row.append(props)
+            }
+            before.append(row)
+        }
+
+        for iStep in 1...100 {
+            lat.step()
+            for ix in 0..<width {
+                for iy in 0..<height {
+                    let currProp = try lat.testingGetNodeProperties(
+                        x: ix, y: iy)
+                    XCTAssertGreaterThan(
+                        currProp.rho, 0.0, "Step \(iStep), [\(iy), \(ix)]")
+                }
+            }
+        }
+    }
+
+    func testSetBoundaries() throws {
+        let width = 32
+        let height = 24
+        let lat = Lattice(width: width, height: height, windSpeed: 50.0)!
+        XCTAssertThrowsError(try lat.setBoundaryEdge(x: -5))
+        XCTAssertThrowsError(try lat.setBoundaryEdge(x: width))
+        XCTAssertThrowsError(try lat.setBoundaryEdge(y: -1))
+        XCTAssertThrowsError(try lat.setBoundaryEdge(y: height))
+    }
+
+    func testDensityRange() throws {
+        let width = 32
+        let height = 24
+        let lat = Lattice(width: width, height: height, windSpeed: 50.0)!
+        for _ in 1...50 {
+            lat.step()
+            let (rhoMin, rhoMax) = lat.getDensityRange()
+            // More weak tea
+            XCTAssertGreaterThanOrEqual(rhoMax, rhoMin)
+        }
 
     }
 }

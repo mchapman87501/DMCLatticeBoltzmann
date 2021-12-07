@@ -19,15 +19,6 @@ public class Tracer {
     }
 
     func move(
-        v: Vector, boundingXMin xMin: Double, yMin: Double, xMax: Double,
-        yMax: Double
-    ) {
-        move(
-            dx: v.x, dy: v.y, boundingXMin: xMin, yMin: yMin, xMax: xMax,
-            yMax: yMax)
-    }
-
-    func move(
         dx: Double, dy: Double, boundingXMin xMin: Double, yMin: Double,
         xMax: Double,
         yMax: Double

@@ -4,7 +4,7 @@ import Foundation
 
 typealias NormalizeFN = (Double) -> Double
 
-private let palette = BluescalePalette()
+private typealias NodePalette = BluescalePalette
 
 class FrameRenderer {
     let title: String
@@ -88,7 +88,7 @@ class FrameRenderer {
                 var color = NSColor.lightGray
                 if !isObstacle[rowIndex + x] {
                     if let props = try? propCalc.getNodeProperties(x: x, y: y) {
-                        color = palette.color(
+                        color = NodePalette.color(
                             fraction: normalizedDensity(props.rho))
                     }
                 }
@@ -278,9 +278,17 @@ struct ArrowShapeMaker {
     // The arrowhead size is fixed.
     // The arrow points in the positive x direction.
     // The arrow's tip is at (0.0, 0.0)
-    func getArrowShape(length shaftLength: Double, width: Double)
+    func getArrowShape(length: Double, width: Double)
         -> NSBezierPath
     {
+        let shaftLength: Double
+        if length.isNaN || length.isInfinite {
+            NSLog("Invalid shaft length \(length)")
+            shaftLength = 0.0
+        } else {
+            shaftLength = length
+        }
+
         let arrow = NSBezierPath()
 
         let arrSz = 5.0 * width / 2.0
