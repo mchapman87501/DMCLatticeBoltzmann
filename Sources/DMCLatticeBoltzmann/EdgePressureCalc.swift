@@ -12,7 +12,12 @@ public struct EdgePressureCalc {
 
         let edgePressures: [Double] = adjCoords.enumerated().map {
             (iEdge, edgeAdjCoords) in
-            var result = 0.0  //            print("  Edge \(iEdge): \(shape.edges[iEdge])")
+            var result = 0.0
+            let numCoords = edgeAdjCoords.count
+            if numCoords <= 0 {
+                return result
+            }
+
             for (latticeX, latticeY) in edgeAdjCoords {
                 if let props = try? propCalc.getNodeProperties(
                     x: latticeX, y: latticeY)
@@ -23,7 +28,7 @@ public struct EdgePressureCalc {
             }
             // Voodoo: average density over # samples, multiply by segment length.
             result =
-                (result / Double(edgeAdjCoords.count))
+                (result / Double(numCoords))
                 * shape.edges[iEdge].asVector().magnitude()
             return result
         }

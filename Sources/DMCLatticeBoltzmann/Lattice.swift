@@ -156,10 +156,10 @@ public class Lattice {
 
     public func addObstacle(shape: Polygon) {
         // Slow and dirty:
-        let yStart = Int(shape.bbox.minY)
-        let yEnd = 1 + Int(shape.bbox.maxY)
-        let xStart = Int(shape.bbox.minX)
-        let xEnd = 1 + Int(shape.bbox.maxX)
+        let yStart = clipped(Int(shape.bbox.minY), height - 1)
+        let yEnd = clipped(1 + Int(shape.bbox.maxY), height - 1)
+        let xStart = clipped(Int(shape.bbox.minX), width - 1)
+        let xEnd = clipped(1 + Int(shape.bbox.maxX), width - 1)
         for y in yStart..<yEnd {
             let rowOffset = y * width
             for x in xStart..<xEnd {
@@ -173,6 +173,10 @@ public class Lattice {
             !shape.contains(x: tracer.x, y: tracer.y)
         }
         tracers = keep
+    }
+
+    private func clipped(_ value: Int, _ maxVal: Int) -> Int {
+        return max(0, min(maxVal, value))
     }
 
     public func setBoundaryEdge(x: Int) throws {
@@ -301,16 +305,6 @@ public class Lattice {
                 dx: props.ux, dy: props.uy, boundingXMin: 0.0, yMin: 0.0,
                 xMax: Double(width - 1), yMax: Double(height - 1))
         }
-    }
-
-    private func wrapped(_ val: Int, _ maxVal: Int) -> Int {
-        if val < 0 {
-            return val + maxVal
-        }
-        if val >= maxVal {
-            return val - maxVal
-        }
-        return val
     }
 
 }

@@ -41,5 +41,8 @@ let package = Package(
         .testTarget(
             name: "DMCLatticeBoltzmannTests",
             dependencies: ["DMCLatticeBoltzmann"]),
+        .testTarget(
+            name: "DMCLatticeBoltzmannRenderTests",
+            dependencies: ["DMCLatticeBoltzmannRender"]),
     ]
 )

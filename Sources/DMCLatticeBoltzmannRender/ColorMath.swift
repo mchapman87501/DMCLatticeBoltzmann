@@ -2,7 +2,7 @@ import Foundation
 
 // NB: Based on old Figure 8 code.
 
-func sRGBToLabD65(red: Double, green: Double, blue: Double) -> (
+internal func sRGBToLabD65(red: Double, green: Double, blue: Double) -> (
     labL: Double, laba: Double, labb: Double
 ) {
     let (x, y, z) = sRGBToXYZ(red: red, green: green, blue: blue)

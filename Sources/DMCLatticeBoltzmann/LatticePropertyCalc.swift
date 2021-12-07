@@ -10,8 +10,6 @@ public struct LatticePropertyCalc {
     public let width: Int
     public let height: Int
 
-    public var numNodes: Int { return width * height }
-
     let index: LatticeIndexing
 
     private let numRecords: Int
@@ -98,14 +96,5 @@ public struct LatticePropertyCalc {
         /// In the most common velocity sets, c\_s = √(1/3) \* ∆x/∆t
         /// (i.e., c_s = √(1/3) in lattice units)."
         return NodeProperties(rho: rho, ux: x, uy: y)
-    }
-}
-
-extension LatticePropertyCalc {
-    // For matrix-oriented calculations.
-    public func getAllProps() -> (
-        rhos: [Float], uxSums: [Float], uySums: [Float]
-    ) {
-        return (rhos: rhos, uxSums: uxSums, uySums: uySums)
     }
 }

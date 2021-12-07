@@ -4,7 +4,7 @@ import Foundation
 
 typealias NormalizeFN = (Double) -> Double
 
-private let palette = BluescalePalette()
+private typealias NodePalette = BluescalePalette
 
 class FrameRenderer {
     let title: String
@@ -88,7 +88,7 @@ class FrameRenderer {
                 var color = NSColor.lightGray
                 if !isObstacle[rowIndex + x] {
                     if let props = try? propCalc.getNodeProperties(x: x, y: y) {
-                        color = palette.color(
+                        color = NodePalette.color(
                             fraction: normalizedDensity(props.rho))
                     }
                 }

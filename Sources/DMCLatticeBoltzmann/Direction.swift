@@ -4,4 +4,3 @@ public enum Direction: Int, CaseIterable {
 }
 
 public let numDirections = Direction.allCases.count
-let directionIndices: [Int] = Direction.allCases.map { $0.rawValue }
