@@ -1,5 +1,6 @@
 import XCTest
 
+@testable import DMC2D
 @testable import DMCLatticeBoltzmann
 
 extension Lattice {
@@ -56,7 +57,7 @@ extension Lattice {
 }
 
 final class LatticeTests: XCTestCase {
-    typealias Polygon = DMCLatticeBoltzmann.Polygon
+    typealias Polygon = DMC2D.Polygon
 
     func magSqr(x: Double, y: Double) -> Double {
         return x * x + y * y

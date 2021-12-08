@@ -1,8 +1,9 @@
 import XCTest
 
+@testable import DMC2D
 @testable import DMCLatticeBoltzmann
 
-typealias Polygon = DMCLatticeBoltzmann.Polygon
+typealias Polygon = DMC2D.Polygon
 
 extension Polygon.Segment {
     func midpoint() -> Vector {

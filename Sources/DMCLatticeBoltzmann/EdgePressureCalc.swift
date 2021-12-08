@@ -1,3 +1,4 @@
+import DMC2D
 import Foundation
 
 /// EdgePressureCalc aggregates pressure (okay, density) info around a shape.
@@ -40,13 +41,12 @@ public struct EdgePressureCalc {
         }
         let edgePressureVectors = (0..<shape.edges.count).map { edgeIndex in
             // Pressure vectors point inward -- opposite to the edge normals
-            return shape.edgeNormals[edgeIndex].scaled(
-                -edgePressures[edgeIndex])
+            return shape.edgeNormals[edgeIndex] * -edgePressures[edgeIndex]
         }
 
         var netPressure = Vector()
         for ep in edgePressureVectors {
-            netPressure = netPressure.adding(ep)
+            netPressure += ep
         }
 
         self.edgeMidpoints = edgeMidpoints

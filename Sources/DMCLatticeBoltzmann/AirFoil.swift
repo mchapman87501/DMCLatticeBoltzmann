@@ -1,3 +1,4 @@
+import DMC2D
 import Foundation
 
 // Airfoil coordinates are of a NACA2412-il foil.  Coordinates were derived

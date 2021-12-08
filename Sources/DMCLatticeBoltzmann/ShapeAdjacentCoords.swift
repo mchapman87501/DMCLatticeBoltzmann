@@ -1,3 +1,4 @@
+import DMC2D
 import Foundation
 
 /// ShapeAdjacentSites records coordinates that are adjacent to the
@@ -38,9 +39,9 @@ public struct ShapeAdjacentCoords {
     internal static func getAdjacentCoordsAlongY(
         shape: Polygon, edge: Polygon.Segment, normal: Vector
     ) -> [Coord] {
-        let n = normal.unit().scaled(0.5)
-        let p0 = Vector(edge.p0).adding(n)
-        let pf = Vector(edge.pf).adding(n)
+        let n = normal.unit() / 2.0
+        let p0 = Vector(edge.p0) + n
+        let pf = Vector(edge.pf) + n
 
         let y0 = p0.y
         let yf = pf.y
@@ -69,9 +70,9 @@ public struct ShapeAdjacentCoords {
     internal static func getAdjacentCoordsAlongX(
         shape: Polygon, edge: Polygon.Segment, normal: Vector
     ) -> [Coord] {
-        let n = normal.unit().scaled(0.5)
-        let p0 = Vector(edge.p0).adding(n)
-        let pf = Vector(edge.pf).adding(n)
+        let n = normal.unit() / 2.0
+        let p0 = Vector(edge.p0) + n
+        let pf = Vector(edge.pf) + n
 
         let y0 = p0.y
         let yf = pf.y

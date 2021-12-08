@@ -1,13 +1,13 @@
 import XCTest
 
+@testable import DMC2D
 @testable import DMCLatticeBoltzmann
 
-typealias TestCoordLists = [[DMCLatticeBoltzmann.ShapeAdjacentCoords.Coord]]
-typealias TestPolygon = DMCLatticeBoltzmann.Polygon
+typealias CoordLists = [[DMCLatticeBoltzmann.ShapeAdjacentCoords.Coord]]
 
 final class ShapeAdjacentCoordsTests: XCTestCase {
 
-    func foilShape() -> TestPolygon {
+    func foilShape() -> Polygon {
         return AirFoil(
             x: 0.0, y: 0.0, width: 100.0, alphaRad: 4.0 * .pi / 180.0
         ).shape
@@ -40,7 +40,7 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
 
         let inShape: [[Bool]]
 
-        init(shape: TestPolygon) {
+        init(shape: Polygon) {
             let sbb = shape.bbox
             let xOrigin = Int(sbb.minX) - 5
             let yOrigin = Int(sbb.minY) - 5
@@ -92,7 +92,7 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
             return isMaskPoint ? "*" : "\(units)"
         }
 
-        func getMaskStr(with adjacents: TestCoordLists) -> [[String]] {
+        func getMaskStr(with adjacents: CoordLists) -> [[String]] {
             var strGrid = getMaskStrGrid()
             for (iEdge, coordList) in adjacents.enumerated() {
                 for (xc, yc) in coordList {
@@ -130,7 +130,7 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
             printMaskStr(getMaskStr(with: [[(xIn, yIn)]]))
         }
 
-        func printMaskStr(with adjacents: TestCoordLists) {
+        func printMaskStr(with adjacents: CoordLists) {
             printMaskStr(getMaskStr(with: adjacents))
         }
     }

@@ -1,10 +1,12 @@
 import AppKit
+import DMC2D
 import DMCLatticeBoltzmann
 import Foundation
 
 typealias NormalizeFN = (Double) -> Double
 
 private typealias NodePalette = BluescalePalette
+typealias Polygon = DMC2D.Polygon
 
 class FrameRenderer {
     let title: String
@@ -12,7 +14,7 @@ class FrameRenderer {
     let scale: Double
 
     let n: LatticeNodeData
-    let foilShape: DMCLatticeBoltzmann.Polygon
+    let foilShape: Polygon
     let propCalc: LatticePropertyCalc
     let normalizedDensity: NormalizeFN
     let isObstacle: [Bool]
@@ -162,7 +164,7 @@ class FrameRenderer {
         let foilCenter = foilShape.center
 
         // Heuristic: scale up the net pressure vector so it has visible length.
-        let pressureVec = epc.netPressure.scaled(10.0)
+        let pressureVec = epc.netPressure * 10.0
         let endPoint = Vector(foilCenter)
         let arrowWidth = foilShape.bbox.width / 50.0
         let netPressShape = maker.getArrowShape(

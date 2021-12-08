@@ -1,4 +1,5 @@
 import AppKit
+import DMC2D
 import DMCLatticeBoltzmann
 import Foundation
 
