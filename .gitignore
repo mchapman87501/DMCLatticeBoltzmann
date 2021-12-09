@@ -7,4 +7,5 @@ xcuserdata/
 DerivedData/
 *.mov
 Package.resolved
+/test_coverage.json
 
