@@ -56,7 +56,7 @@ class WorldWriterTests: XCTestCase {
             fm.fileExists(atPath: moviePath), "No such file: \(moviePath)")
 
         let attrs = try fm.attributesOfItem(atPath: moviePath)
-        let fileSize = attrs[.size]! as! Int
+        let fileSize = (attrs[.size]! as? Int) ?? -1
         XCTAssertTrue(fileSize > 0)
     }
 }

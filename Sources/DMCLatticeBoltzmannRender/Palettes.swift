@@ -278,6 +278,7 @@ public struct InfernoPalette: Palette {
     }
 }
 
+// swiftlint:disable indentation_width
 /*
  * Thanks to https://stackoverflow.com/a/51290462
  * RGB values generated with Python and matplotlib, using:
@@ -294,6 +295,8 @@ for pct in range(256):
 print("    ]")
 
  */
+// swiftlint:enable indentation_width
+
 public struct BWRPalette: Palette {
     private static let rgb = [
         [0.000000, 0.000000, 1.000000],
