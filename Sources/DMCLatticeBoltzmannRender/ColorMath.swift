@@ -104,5 +104,4 @@ func sRGBToXYZ(red: Double, green: Double, blue: Double) -> (
         y: 0.212656 * r + 0.715158 * g + 0.0721856 * b,
         z: 0.0193324 * r + 0.119193 * g + 0.950444 * b
     )
-
 }

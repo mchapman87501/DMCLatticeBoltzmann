@@ -4,7 +4,7 @@ import Foundation
 public typealias NodeProperties = SystemProperties
 
 public struct LatticePropertyCalc {
-    static private var fone = (0..<numDirections).map { _ in Float(1.0) }
+    private static var fone = (0..<numDirections).map { _ in Float(1.0) }
 
     let n: LatticeNodeData
     public let width: Int

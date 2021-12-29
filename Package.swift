@@ -8,7 +8,7 @@ let package = Package(
     // https://docs.swift.org/package-manager/PackageDescription/PackageDescription.html
     platforms: [
         .macOS(.v11),
-        //.linux
+        // .linux
     ],
     products: [
         .library(

@@ -9,13 +9,13 @@ extension Lattice {
     }
 
     internal func testingGetProperties() -> SystemProperties {
-        return propCalc.getProperties()
+        propCalc.getProperties()
     }
 
     internal func testingGetNodeProperties(x: Int, y: Int) throws
         -> NodeProperties
     {
-        return try propCalc.getNodeProperties(x: x, y: y)
+        try propCalc.getNodeProperties(x: x, y: y)
     }
 
     internal func testingSetNodeDensities(x: Int, y: Int, values: [Double])
@@ -57,10 +57,10 @@ extension Lattice {
 }
 
 final class LatticeTests: XCTestCase {
-    typealias Polygon = DMC2D.Polygon
+    private typealias Polygon = DMC2D.Polygon
 
-    func magSqr(x: Double, y: Double) -> Double {
-        return x * x + y * y
+    private func magSqr(x: Double, y: Double) -> Double {
+        x * x + y * y
     }
 
     func testInit() throws {
@@ -138,7 +138,7 @@ final class LatticeTests: XCTestCase {
         }
     }
 
-    func testStreamOneDirection(dir: Direction) throws {
+    private func testStreamOneDirection(dir: Direction) throws {
         let dirIndex = dir.rawValue
         let width = 4
         let height = 4
@@ -384,6 +384,5 @@ final class LatticeTests: XCTestCase {
             // More weak tea
             XCTAssertGreaterThanOrEqual(rhoMax, rhoMin)
         }
-
     }
 }

@@ -27,7 +27,7 @@ struct Scenario {
     let windSpeed: Double
 
     func description() -> String {
-        return String(
+        String(
             format: """
                 Temperature: %.2f
                 Viscosity: %.4f

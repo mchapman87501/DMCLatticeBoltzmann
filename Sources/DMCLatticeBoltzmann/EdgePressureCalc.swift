@@ -12,7 +12,7 @@ public struct EdgePressureCalc {
         let adjCoords = ShapeAdjacentCoords(shape: shape).adjacents
 
         let edgePressures: [Double] = adjCoords.enumerated().map {
-            (iEdge, edgeAdjCoords) in
+            iEdge, edgeAdjCoords in
             var result = 0.0
             let numCoords = edgeAdjCoords.count
             if numCoords <= 0 {

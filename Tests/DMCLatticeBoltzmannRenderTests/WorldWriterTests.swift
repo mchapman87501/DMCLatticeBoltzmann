@@ -5,7 +5,7 @@ import XCTest
 @testable import DMCMovieWriter
 
 class WorldWriterTests: XCTestCase {
-    let movieURL = URL(fileURLWithPath: "movie.mov")
+    private let movieURL = URL(fileURLWithPath: "movie.mov")
 
     override func tearDownWithError() throws {
         let fm = FileManager.default

@@ -6,12 +6,12 @@ struct LatticeIndexing {
 
     // Get the index of a mask node
     public func maskIndex(x: Int, y: Int) -> Int {
-        return y * width + x
+        y * width + x
     }
 
     // Get the index of a node's first (of numDirections) cell.
     public func uncheckedSiteIndex(x: Int, y: Int) -> Int {
-        return (y * width + x) * numDirections
+        (y * width + x) * numDirections
     }
 
     public func siteIndex(x: Int, y: Int) throws -> Int {

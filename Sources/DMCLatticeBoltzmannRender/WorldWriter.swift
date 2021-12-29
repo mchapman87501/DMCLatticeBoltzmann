@@ -67,7 +67,7 @@ public struct WorldWriter {
     private func titleFrameImage(title: String, size: NSSize, alpha: Double)
         -> NSImage
     {
-        return NSImage(size: size, flipped: false) { rect in
+        NSImage(size: size, flipped: false) { rect in
             NSColor.black.setFill()
             NSBezierPath.fill(rect)
 
@@ -112,5 +112,4 @@ public struct WorldWriter {
             return result
         }
     }
-
 }

@@ -133,16 +133,22 @@ public class Lattice {
             switch dir {
             case .none:
                 return wNone * baseline
+
             case .n:
                 return wCardinal * baseline
+
             case .e:
                 return wCardinal * easterly
+
             case .w:
                 return wCardinal * westerly
+
             case .s:
                 return wCardinal * baseline
+
             case .ne, .se:
                 return wOrdinal * easterly
+
             case .nw, .sw:
                 return wOrdinal * westerly
             }
@@ -177,7 +183,7 @@ public class Lattice {
     }
 
     private func clipped(_ value: Int, _ maxVal: Int) -> Int {
-        return max(0, min(maxVal, value))
+        max(0, min(maxVal, value))
     }
 
     public func setBoundaryEdge(x: Int) throws {
@@ -259,7 +265,7 @@ public class Lattice {
         let height = height
 
         func wrapped(_ val: Int, _ maxVal: Int) -> Int {
-            return (val < 0)
+            (val < 0)
                 ? (val + maxVal) : ((val >= maxVal) ? val - maxVal : val)
         }
 
@@ -307,7 +313,6 @@ public class Lattice {
                 xMax: Double(width - 1), yMax: Double(height - 1))
         }
     }
-
 }
 
 // For visualization:

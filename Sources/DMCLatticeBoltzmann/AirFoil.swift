@@ -47,12 +47,12 @@ public struct AirFoil {
         ]
 
         // Normalize in x.
-        let xvals = vertexCoords.map { (x, y) in x }
-        let ymin = vertexCoords.map { (x, y) in y }.min()!
+        let xvals = vertexCoords.map { x, _ in x }
+        let ymin = vertexCoords.map { _, y in y }.min()!
         let xmin = xvals.min()!
         let mag = xvals.max()! - xvals.min()!
         let normedCoords = vertexCoords.map {
-            (x, y) in
+            x, y in
             (((x - xmin) / mag), ((y - ymin) / mag))
         }
 
@@ -60,13 +60,13 @@ public struct AirFoil {
         // rotate clockwise (-alphaRad).
         let cosAlpha = cos(-alphaRad)
         let sinAlpha = sin(-alphaRad)
-        let rotatedCoords = normedCoords.map { (x, y) in
+        let rotatedCoords = normedCoords.map { x, y in
             ((cosAlpha * x - sinAlpha * y), (sinAlpha * x + cosAlpha * y))
         }
 
         // Scale up so airfoil has the requested width.
         let scaledCoords = rotatedCoords.map {
-            (x, y) in
+            x, y in
             ((x * width + left), (y * width + bottom))
         }
         shape = Polygon(scaledCoords)

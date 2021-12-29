@@ -15,7 +15,7 @@ public class Tracer {
     }
 
     func wholePos() -> (x: Int, y: Int) {
-        return (x: Int(x + 0.5), y: Int(y + 0.5))
+        (x: Int(x + 0.5), y: Int(y + 0.5))
     }
 
     func move(

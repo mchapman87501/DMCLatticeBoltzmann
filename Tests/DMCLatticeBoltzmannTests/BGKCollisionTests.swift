@@ -5,7 +5,7 @@ import XCTest
 final class BGKCollisionTests: XCTestCase {
     // XXX FIX THIS these tests are all very superficial and weak
 
-    func testDirection(direction: Int, windSpeed: Double) throws {
+    private func testDirection(direction: Int, windSpeed: Double) throws {
         let width = 5
         let height = 2
         var n = LatticeNodeData.allocate(

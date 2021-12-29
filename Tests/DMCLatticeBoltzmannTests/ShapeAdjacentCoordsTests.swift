@@ -6,9 +6,8 @@ import XCTest
 typealias CoordLists = [[DMCLatticeBoltzmann.ShapeAdjacentCoords.Coord]]
 
 final class ShapeAdjacentCoordsTests: XCTestCase {
-
-    func foilShape() -> Polygon {
-        return AirFoil(
+    private func foilShape() -> Polygon {
+        AirFoil(
             x: 0.0, y: 0.0, width: 100.0, alphaRad: 4.0 * .pi / 180.0
         ).shape
     }
@@ -30,7 +29,7 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
         }
     }
 
-    struct ShapeMask: CustomStringConvertible {
+    private struct ShapeMask: CustomStringConvertible {
         // Origin:
         let x: Int
         let y: Int
@@ -74,13 +73,13 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
         }
 
         var description: String {
-            return "ShapeMask(\(x), \(y), \(width), \(height))"
+            "ShapeMask(\(x), \(y), \(width), \(height))"
         }
 
         func getMaskStrGrid() -> [[String]] {
             let result: [[String]] = inShape.map { row in
                 row.map { isMaskPoint in
-                    return isMaskPoint ? "+" : "."
+                    isMaskPoint ? "+" : "."
                 }
             }
             return result
@@ -121,7 +120,7 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
             // This tries to pixellate the polygon and the generated adjacents
             // list, as text to stdout.
             for row in maskStr.reversed() {
-                print(row.joined(separator: ""))
+                print(row.joined())
             }
         }
 
@@ -135,7 +134,8 @@ final class ShapeAdjacentCoordsTests: XCTestCase {
         }
     }
 
-    func abuts(mask: ShapeMask, edgeIndex: Int, x: Int, y: Int) -> Bool {
+    private func abuts(mask: ShapeMask, edgeIndex: Int, x: Int, y: Int) -> Bool
+    {
         // Adjacency test is complicated by rounding to nearest integer coordinates.
 
         // Verify that the point lies outside the mask.

@@ -31,7 +31,7 @@ public struct MovieFrame {
     private static func initNodeRects(lattice: Lattice, scale: Double)
         -> [[NSRect]]
     {
-        return (0..<lattice.width).map { x in
+        (0..<lattice.width).map { x in
             let xDisplay = Double(x) * scale
             let column: [NSRect] = (0..<lattice.height).map { y in
                 let yDisplay = Double(y) * scale
