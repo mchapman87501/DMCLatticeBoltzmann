@@ -4,29 +4,42 @@ import simd
 
 // Lattice Node Vectors - elements are in the same order as Direction.
 // TODO Factor to a separate source file.
-public let idvx = [0, 0, 1, 1, 1, 0, -1, -1, -1]
-public let idvy = [0, 1, 1, 0, -1, -1, -1, 0, 1]
+let idvx = [0, 0, 1, 1, 1, 0, -1, -1, -1]
+let idvy = [0, 1, 1, 0, -1, -1, -1, 0, 1]
 
-public let dvx = idvx.map { Double($0) }
-public let fdvx = idvx.map { Float($0) }
+let dvx = idvx.map { Double($0) }
+let fdvx = idvx.map { Float($0) }
 
-public let dvy = idvy.map { Double($0) }
-public let fdvy = idvy.map { Float($0) }
+let dvy = idvy.map { Double($0) }
+let fdvy = idvy.map { Float($0) }
 
+/// Defines the in-memory representation of lattice site / field data
 public typealias LatticeNodeData = UnsafeMutablePointer<Float>
+/// Boolean mask used to identify lattice sites that are part of, e.g., obstacles or flow boundaries
 public typealias LatticeMaskData = [Bool]
 
+/// Represents a D2Q9 Lattice-Boltzmann lattice.
 public class Lattice {
+    /// number of lattice sites in the x direction
     public let width: Int
+    /// number of lattice sites in the y direction
     public let height: Int
     let omega: Double
 
+    /// a flattened array containing the data for all fields of all lattice sites
+    ///
+    /// This isn't intended for general use.  `LatticeBoltzmannRender` understands the structure of
+    /// this data and uses it to render lattice images.
     public private(set) var n: LatticeNodeData
     private var nStream: LatticeNodeData
 
+    /// a flattened array indicating which lattice sites represent obstacles
     public private(set) var isObstacle: LatticeMaskData
+    /// a flattened array indicating which lattice sites represent flow boundaries
     public private(set) var isBoundary: LatticeMaskData
 
+    /// An array of ``Tracer``s that flow through the Lattice in accodance with
+    /// macroscopic site velocities
     public private(set) var tracers: [Tracer]
 
     // "internal": to support unit testing
@@ -38,6 +51,18 @@ public class Lattice {
         label: "lattice steps", qos: .utility, attributes: .concurrent)
     private let group = DispatchGroup()
 
+    /// Create a new lattice.
+    ///
+    /// The `temperature` is specified in degrees Celsius.  The `windSpeed` is specified in meters
+    /// per second, in the positive x direction.  Despite the physical units, these are really just hints.  Their
+    /// ratio determines the (unitless) macroscopic flow velocities with which lattice sites are initialized.
+    ///
+    /// - Parameters:
+    ///   - width: the number of sites in the x direction
+    ///   - height: the number of sites in the y direction
+    ///   - omega: equilibrium relaxation rate factor
+    ///   - temperature: the temperature of the simulated fluiid
+    ///   - windSpeed: the macroscopic speed of the fluid, in the positive x direction
     public init?(
         width: Int, height: Int, omega: Double = 0.5,
         temperature: Double = 20.0, windSpeed: Double = 0.0
@@ -161,6 +186,8 @@ public class Lattice {
         nStream.deallocate()
     }
 
+    /// Add an obstacle to the lattice.
+    /// - Parameter shape: a `Polygon` defining the shape of the obstacle.
     public func addObstacle(shape: Polygon) {
         // Slow and dirty:
         let yStart = clipped(Int(shape.bbox.minY), height - 1)
@@ -186,6 +213,10 @@ public class Lattice {
         max(0, min(maxVal, value))
     }
 
+    /// Add a vertical flow boundary to the lattice.
+    ///
+    /// The boundary occupies a single lattice column.
+    /// - Parameter x: x coordinate of the boundary
     public func setBoundaryEdge(x: Int) throws {
         guard (0 <= x) && (x < width) else {
             throw LatticeError.indexError("x (\(x)) must be in 0..<\(width)")
@@ -195,6 +226,10 @@ public class Lattice {
         }
     }
 
+    /// Add a horizontal flow boundary to the lattice.
+    ///
+    /// The boundary occupies a single lattice row.
+    /// - Parameter y: y coordinate of the boundary
     public func setBoundaryEdge(y: Int) throws {
         guard (0 <= y) && (y < height) else {
             throw LatticeError.indexError("y (\(y)) must be in 0..<\(height)")
@@ -205,10 +240,15 @@ public class Lattice {
         }
     }
 
+    /// Advance the simulation by a single time step.
+    ///
+    /// Collide particle distributions; stream particle distributions; calculate new macroscopic properties;
+    /// maybe move the ``Tracer``s.
+    /// - Parameter disableTracers: if `true`, don't update the positions of the ``Tracer``s
     public func step(disableTracers: Bool = false) {
         collide()
         stream()
-        propCalc.update()
+        propCalc = LatticePropertyCalc(n: n, width: width, height: height)
         if !disableTracers {
             moveTracers()
         }
@@ -216,7 +256,7 @@ public class Lattice {
 
     internal func collide() {
         let numNodes = width * height
-        let stepSize = numNodes / (3 * concurrency)
+        let stepSize = max(1, numNodes / (3 * concurrency))
         for iStart in stride(from: 0, to: numNodes, by: stepSize) {
             queue.async(group: group) {
                 let iEnd = min(numNodes, iStart + stepSize)

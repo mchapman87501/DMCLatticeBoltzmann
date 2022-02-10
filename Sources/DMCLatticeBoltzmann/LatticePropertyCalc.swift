@@ -1,13 +1,19 @@
 import Accelerate
 import Foundation
 
+/// Describes the properties of a lattice site.
+///
+/// See ``SystemProperties`` for general info about the instance properties.
 public typealias NodeProperties = SystemProperties
 
+/// Calculates macroscopic properties of a ``Lattice``.
 public struct LatticePropertyCalc {
     private static var fone = (0..<numDirections).map { _ in Float(1.0) }
 
     let n: LatticeNodeData
+    /// The horizontal extent of the ``Lattice`` of interest
     public let width: Int
+    /// The vertical extent of the ``Lattice`` of interest
     public let height: Int
 
     let index: LatticeIndexing
@@ -19,6 +25,11 @@ public struct LatticePropertyCalc {
     private var ux: [Float]
     private var uy: [Float]
 
+    /// Create a new property calculator.
+    /// - Parameters:
+    ///   - n: the flattened field data array of the ``Lattice`` of interest
+    ///   - width: horizontal extent of the ``Lattice``
+    ///   - height: vertical extent of the ``Lattice``
     public init(n: LatticeNodeData, width: Int, height: Int) {
         self.n = n
         self.width = width
@@ -32,10 +43,6 @@ public struct LatticePropertyCalc {
         self.uySums = [Float](repeating: 0.0, count: numRecords)
         self.ux = [Float](repeating: 0.0, count: numRecords)
         self.uy = [Float](repeating: 0.0, count: numRecords)
-        calcAllNodeProperties()
-    }
-
-    public mutating func update() {
         calcAllNodeProperties()
     }
 
@@ -61,6 +68,8 @@ public struct LatticePropertyCalc {
         vvdivf(&uy, &uySums, &rhos, &nr)
     }
 
+    /// Get the macroscopic properties of the ``Lattice`` as a whole.
+    /// - Returns: macroscopic properties (density, velocity)
     public func getProperties() -> SystemProperties {
         let rhoSum = Double(rhos.reduce(0.0) { $0 + $1 })
         let uxSum = Double(uxSums.reduce(0.0) { $0 + $1 })
@@ -72,13 +81,18 @@ public struct LatticePropertyCalc {
         return SystemProperties(rho: rho, ux: ux, uy: uy)
     }
 
+    /// Get the macroscopic properties of a single ``Lattice`` site.
+    /// - Parameters:
+    ///   - x: x coordinate of the site
+    ///   - y: y coordinate of the site
+    /// - Returns: macroscopic properties of the site
     public func getNodeProperties(x: Int, y: Int) throws -> NodeProperties {
         let offset = try index.siteIndex(x: x, y: y)
         let result = getNodeProperties(offset: offset)
         return result
     }
 
-    public func getNodeProperties(offset nodeOffset: Int) -> NodeProperties {
+    func getNodeProperties(offset nodeOffset: Int) -> NodeProperties {
         // XXX FIX THIS artifact of old API
         let offset = nodeOffset / numDirections
 

@@ -1,13 +1,13 @@
 import AppKit
 import Foundation
 
-public protocol Palette {
+protocol Palette {
     static func color(fraction value: Double) -> NSColor
 }
 
 // Inferno colors from
 // https://github.com/BIDS/colormap/blob/master/colormaps.py
-public struct InfernoPalette: Palette {
+struct InfernoPalette: Palette {
     private static let infernoRGB = [
         [0.001462, 0.000466, 0.013866],
         [0.002267, 0.001270, 0.018570],
@@ -297,7 +297,7 @@ print("    ]")
  */
 // swiftlint:enable indentation_width
 
-public struct BWRPalette: Palette {
+struct BWRPalette: Palette {
     private static let rgb = [
         [0.000000, 0.000000, 1.000000],
         [0.008715, 0.008715, 1.000000],
@@ -567,7 +567,7 @@ public struct BWRPalette: Palette {
     }
 }
 
-public struct BluescalePalette: Palette {
+struct BluescalePalette: Palette {
     private static let (_, claba, clabb) = sRGBToLabD65(
         red: 0.0, green: 0.8 * 255.0, blue: 255.0)
     private static let colors: [NSColor] = stride(from: 0.0, to: 100.0, by: 0.1)

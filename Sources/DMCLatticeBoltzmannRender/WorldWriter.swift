@@ -3,6 +3,7 @@ import DMCLatticeBoltzmann
 import DMCMovieWriter
 import Foundation
 
+/// Creates movies showing the evolving state of a fluid flow simulation.
 public struct WorldWriter {
     let lattice: Lattice
     let foil: AirFoil
@@ -10,6 +11,14 @@ public struct WorldWriter {
     let frameMaker: MovieFrame
     var title: String
 
+    /// Create a new instance to record a simulation to a movie URL.
+    ///
+    /// Caveat emptor: this has been tested only with local `file:` movie URLs.
+    /// - Parameters:
+    ///   - lattice: the lattice to be recorded
+    ///   - foil: airfoil around which fluid flow is being modeled
+    ///   - writingTo: the location of the output movie
+    ///   - title: title text to be displayed in legend overlays
     public init(
         lattice: Lattice, foil: AirFoil, writingTo: DMCMovieWriter,
         title: String = ""
@@ -24,9 +33,11 @@ public struct WorldWriter {
     }
 
     /// Add a title frame.
+    ///
+    /// Caveat: Multline titles *should* be supported, but this has not been tested.
     /// - Parameters:
-    ///   - title: Text to show in the title frame.  Multiline text *should* be supported, but I can't guarantee that it will be.
-    ///   - duration: How long to display the title frame, excluding any fade-in/out time.
+    ///   - title: Text to show in the title frame
+    ///   - duration: How long to display the title frame, excluding any fade-in/out time
     public func showTitle(_ title: String, duration seconds: Int = 3) throws {
         let size = NSSize(width: lattice.width, height: lattice.height)
 
@@ -94,12 +105,25 @@ public struct WorldWriter {
         }
     }
 
+    /// Record the current state of the simulation as a new movie frame.
+    ///
+    /// `alpha` can be used for fade-in/fade-out effects.  A value of 0 produces a black, "faded out," frame.
+    /// A value of 1 produces a normal, "faded in," frame.
+    ///
+    /// - Parameter alpha: the movie frame transparency
     public func writeNextFrame(alpha: Double = 1.0) throws {
         try autoreleasepool {
             try movieWriter.addFrame(frameMaker.createFrame(alpha: alpha))
         }
     }
 
+    /// Get an image showing the current state of the simulation.
+    ///
+    /// This method is for creating images to be displayed in user interfaces, e.g., to show the
+    /// progress of a movie recording.
+    ///
+    /// - Parameter desiredWidth: the desired width of the image, in points
+    /// - Returns: an image depicting the current state of the simulation
     public func getCurrFrame(width desiredWidth: Double) -> NSImage {
         autoreleasepool {
             let scaleFactor = desiredWidth / Double(lattice.width)

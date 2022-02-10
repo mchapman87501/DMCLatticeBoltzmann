@@ -1,15 +1,15 @@
 import Accelerate
 
-public struct BGKCollision {
+struct BGKCollision {
     private static let cardinal = 1.0 / 9.0
     private static let diagonal = 1.0 / 36.0
-    public static let weights = [
+    static let weights = [
         4.0 / 9.0,  // center
         cardinal, diagonal, cardinal, diagonal, cardinal, diagonal, cardinal,
         diagonal,
     ]
 
-    public static func getFEq(
+    static func getFEq(
         direction: Int, siteProps p: NodeProperties, dvix: Double, dviy: Double
     ) -> Double {
         let weight = weights[direction]

@@ -1,16 +1,20 @@
 import DMC2D
 import Foundation
 
-/// ShapeAdjacentSites records coordinates that are adjacent to the
-/// sides of a shape.  This information can be used to extract aggregate properties along
-/// a shape's boundaries – e.g., the aggregate pressure along each edge of an airfoil polygon.
-public struct ShapeAdjacentCoords {
+// Records coordinates that are adjacent to the
+// sides of a shape.
+//
+// This information can be used to extract aggregate properties along
+// a shape's boundaries – e.g., the aggregate pressure along each edge of an airfoil polygon.
+struct ShapeAdjacentCoords {
     struct ShapeCoord: Hashable {
         let x: Int
         let y: Int
     }
+    // Represents the location of a site within a lattice.
     public typealias Coord = (Int, Int)
 
+    // Array of locations of lattice sites that are adjacent to self's polygon.
     public let adjacents: [[Coord]]
 
     init(shape: Polygon) {

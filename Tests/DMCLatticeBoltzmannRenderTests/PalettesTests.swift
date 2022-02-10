@@ -1,7 +1,7 @@
-import DMCLatticeBoltzmannRender
 import XCTest
 
 @testable import DMCLatticeBoltzmann
+@testable import DMCLatticeBoltzmannRender
 
 final class PalettesTests: XCTestCase {
     private func testColorRetrieval(_ colorFn: (Double) -> NSColor) throws {

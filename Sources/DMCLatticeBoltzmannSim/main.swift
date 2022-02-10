@@ -6,7 +6,7 @@ import DMCMovieWriter
 // https://physics.weber.edu/schroeder/javacourse/LatticeBoltzmann.pdf
 import Foundation
 
-struct StopWatch {
+private struct StopWatch {
     let t0 = DispatchTime.now()
 
     func finish(_ msg: String) {
@@ -21,7 +21,7 @@ struct StopWatch {
     }
 }
 
-struct Scenario {
+private struct Scenario {
     let temperature: Double
     let viscosity: Double
     let windSpeed: Double
@@ -36,7 +36,7 @@ struct Scenario {
     }
 }
 
-func run(
+private func run(
     scenario: Scenario, lattice: Lattice, foil: AirFoil,
     writingTo movieWriter: DMCMovieWriter
 ) {
@@ -89,7 +89,7 @@ func run(
     }
 }
 
-func recordScenario(
+private func recordScenario(
     movieWriter: DMCMovieWriter, worldWidth: Int, worldHeight: Int,
     scenario: Scenario
 ) {
@@ -115,7 +115,7 @@ func recordScenario(
     )
 }
 
-func getScenarios() -> [Scenario] {
+private func getScenarios() -> [Scenario] {
     var result = [Scenario]()
     let temperature = 20.0
     for viscosity in [0.002, 0.04] {
@@ -129,6 +129,7 @@ func getScenarios() -> [Scenario] {
     return result
 }
 
+/// Create and run a simulation, recording its evolution to `movie.mov` in the current working directory.
 func main() {
     let worldWidth = 1280
     let worldHeight = 720

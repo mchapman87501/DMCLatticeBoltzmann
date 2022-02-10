@@ -4,10 +4,6 @@ import XCTest
 @testable import DMCLatticeBoltzmann
 
 extension Lattice {
-    internal func testingUpdateNodeProperties() {
-        propCalc.update()
-    }
-
     internal func testingGetProperties() -> SystemProperties {
         propCalc.getProperties()
     }
@@ -123,10 +119,6 @@ final class LatticeTests: XCTestCase {
             }
         }
         lat.stream()
-        // Darn.  This test requires exposing lattice operations that otherwise would
-        // not need to be exposed: update node properties, and get node densities.
-        lat.testingUpdateNodeProperties()
-
         i = 0
         for y in 0..<height {
             for x in 0..<width {

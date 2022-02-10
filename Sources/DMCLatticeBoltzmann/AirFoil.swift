@@ -1,20 +1,28 @@
 import DMC2D
 import Foundation
 
-// Airfoil coordinates are of a NACA2412-il foil.  Coordinates were derived
-// from the CSV download link at
-// http://airfoiltools.com/plotter/index?airfoil=naca2412-il
+/// Represents an airfoil as a polygon whose shape can be added, as an obstacle, to a ``Lattice``.
+///
+/// The coordinates of the polygon are those of a NACA2412 airfoil, similar to the airfoil used by
+/// a Cessna 172.  The coordinates were generated using the algorithm detailed at
+/// [airfoiltools.com](http://airfoiltools.com/airfoil/naca4digit).  Some points near the
+/// trailing edge were removed manually.
 public struct AirFoil {
+    /// The airfoil's shape
     public let shape: Polygon
 
+    /// Create a new airfoil.
+    ///
+    /// The foil is rotated to the specified angle of attack, `alphaRad`.  It is scaled to the specified `width` and positioned
+    /// with its leftmost point at `left` and its bottom-most point at `bottom`.
+    /// - Parameters:
+    ///   - left: leftmost point of the foil shape
+    ///   - bottom: bottom-most point of the foil shape
+    ///   - width: total width of the foil shape
+    ///   - alphaRad: angle of attack of the foil shape, in radians
     public init(
         x left: Double, y bottom: Double, width: Double, alphaRad: Double
     ) {
-        // NACA2412
-        // Coordinates were generated w. the algorithm detailed at
-        // http://airfoiltools.com/airfoil/naca4digit
-        // as implemented by https://github.com/mchapman87501/naca_4_digit_airfoils
-        // Some points near the trailing edge were manually removed.
         let vertexCoords: [(Double, Double)] = [
             (0.0000, 0.0000),
             (0.0092, 0.0188),

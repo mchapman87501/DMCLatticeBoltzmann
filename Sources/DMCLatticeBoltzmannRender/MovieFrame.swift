@@ -2,7 +2,7 @@ import AppKit
 import DMCLatticeBoltzmann
 import Foundation
 
-/// Makes PNG images (movie frames) from world state
+/// Make images (movie frames) of a `Lattice` fluid flow simulation.
 public struct MovieFrame {
     let lattice: Lattice
     let foil: AirFoil
@@ -14,6 +14,13 @@ public struct MovieFrame {
 
     private let nodeRects: [[NSRect]]
 
+    /// Create a new image (movie frame) generator.
+    /// - Parameters:
+    ///   - lattice: lattice whose state is to be depicted
+    ///   - foil: airfoil around which the lattice is simulating flow
+    ///   - width: desired width of movie frames, in pixels
+    ///   - height: desired height of movie frames, in pixels
+    ///   - title: the title to be displayed in the legend of each image
     public init(
         lattice: Lattice, foil: AirFoil, width: Int, height: Int, title: String
     ) {
@@ -42,6 +49,13 @@ public struct MovieFrame {
         }
     }
 
+    /// Create an image showing the current state of self's `Lattice`.
+    ///
+    /// `alpha` can be used for fade-in/fade-out effects.  A value of 0 results in a solid black, "faded out," image.
+    /// A value of 1 results in a normal, "faded in," depiction of the world.
+    ///
+    /// - Parameter alpha: the opacity of the depiction over a black background
+    /// - Returns: an image depicting the current lattice state
     public func createFrame(alpha: Double = 1.0) -> NSImage {
         let size = NSSize(width: imgWidth, height: imgHeight)
 
