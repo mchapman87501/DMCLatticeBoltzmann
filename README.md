@@ -1,5 +1,7 @@
 # DMCLatticeBoltzmann
 
+![Build and test with coverage](https://github.com/mchapman87501/DMCLatticeBoltzmann/actions/workflows/swift_build_and_test_with_coverage.yml/badge.svg)
+
 This is a Swift implementation of a D2Q9 Lattice-Boltzmann fluid flow simulation.
 
 This package defines three products.
